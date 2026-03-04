@@ -88,7 +88,7 @@ As the analysis uses only publicly accessible, anonymized aggregate statistics, 
 
 | Model | Type | CV R² | Test R² | Test RMSE | Test MAE | Key Characteristics |
 |-------|------|-------|---------|-----------|----------|---------------------|
-| **Lasso Regression** ⭐ | Linear (L1) | 0.62 ± 0.04 | **0.72** | **144.54** | **107.70** | Automatic feature selection, best performance |
+| **Lasso Regression**  | Linear (L1) | 0.62 ± 0.04 | **0.72** | **144.54** | **107.70** | Automatic feature selection, best performance |
 | Linear Regression | Baseline | 0.62 | 0.69 | 148.54 | 109.74 | Unregularized baseline |
 | Gradient Boosting | Ensemble | 0.61 | 0.63 | 166.07 | 120.05 | Best tree-based model |
 
