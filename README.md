@@ -116,61 +116,6 @@ As the analysis uses only publicly accessible, anonymized aggregate statistics, 
 
 ---
 
-## Requirements
-
-### Python Version
-- Python 3.8+
-
-### Libraries
-```
-pandas >= 1.3.0
-numpy >= 1.21.0
-scikit-learn >= 1.0.0
-scipy >= 1.7.0
-statsmodels >= 0.13.0
-matplotlib >= 3.4.0
-seaborn >= 0.11.0
-shap >= 0.40.0
-jupyter >= 1.0.0
-```
-
----
-
-### Prepare the Dataset
-Ensure the NHS Fingertips dataset is available in the `/data` directory:
-```
-data/pediatric_pneumonia_england_LA_dataset_2023_2024.csv
-```
-
-### Run the Analysis
-**Launch Jupyter Notebook:**
-```bash
-jupyter notebook
-```
-
-**Open the main notebook:**
-- Navigate to `Pediatric_Pneumonia_AnalysisC.ipynb`
-- Run: `Kernel` → `Restart & Run All`
-
-**Expected Runtime:**
-- Full notebook execution: ~5-10 minutes
-- Hyperparameter tuning: 2-3 minutes
-- Visualization generation: 1-2 minutes
-
-### Loading Pre-Trained Models (Optional)
-```python
-import joblib
-
-# Load saved Lasso model
-lasso_model = joblib.load('models/lasso_best_model.pkl')
-scaler = joblib.load('models/scaler.pkl')
-
-# Make predictions
-predictions = lasso_model.predict(X_test_scaled)
-```
-
----
-
 ## Key Findings
 
 ### 1. Strong Predictive Capability
@@ -207,18 +152,6 @@ predictions = lasso_model.predict(X_test_scaled)
 - **Clinical Validation:** Collaborate with NHS England for field testing and policy implementation
 - **Extension to Other Conditions:** Apply methodology to asthma, bronchiolitis, other pediatric respiratory illnesses
 - **Interactive Dashboard:** Deploy Streamlit/Dash interface for NHS commissioners
-
----
-
-## Acknowledgments
-
-I would like to thank:
-- **Dr. Vid Irsic** (University of Hertfordshire) for academic supervision and guidance
-- **NHS Fingertips** and **Public Health England** for providing open access to public health data
-- **UK Office for Health Improvement and Disparities (OHID)** for maintaining data infrastructure
-- **University of Hertfordshire** for academic support and resources
-- **scikit-learn** and **SHAP** development teams for excellent machine learning tools
-- The **open-source Python community** for foundational data science libraries
 
 ---
 
