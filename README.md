@@ -1,23 +1,23 @@
-# Predicting Paediatric Pneumonia Emergency Hospitalisation Rates Across English Local Authorities Using Machine Learning
+# Predicting Pediatric Pneumonia Emergency Hospitalisation Rates Across English Local Authorities Using Machine Learning
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-1.3+-orange.svg)
 ![SHAP](https://img.shields.io/badge/SHAP-Interpretability-green.svg)
 ![Licence](https://img.shields.io/badge/Licence-Academic-lightgrey.svg)
 
-MSc Data Science dissertation project applying interpretable machine learning to predict paediatric pneumonia emergency hospitalisation rates across 281 English Local Authorities using NHS Fingertips data (2023/24).
+MSc Data Science project applying interpretable machine learning to predict pediatric pneumonia emergency hospitalisation rates across 281 English Local Authorities using NHS Fingertips data (2023/24).
 
 ---
 
 ## Overview
 
-Paediatric pneumonia is a major driver of emergency hospital admissions in England, with substantial geographic variation across Local Authorities. This project builds and validates a predictive modelling framework using regularised regression and tree-based methods to:
+Pediatric pneumonia is a major driver of emergency hospital admissions in England, with substantial geographic variation across Local Authorities. This project builds and validates a predictive modelling framework using regularised regression and tree-based methods to:
 
 - Quantify geographic inequalities in paediatric pneumonia burden
 - Identify the most important socioeconomic, demographic, and healthcare-utilisation drivers
 - Provide NHS England with an interpretable tool for evidence-based resource allocation
 
-The final model (**Lasso Regression**) explains **72% of the geographic variance** in paediatric pneumonia rates (Test R² = 0.7172) while meeting all standard regression assumptions.
+The final model (**Lasso Regression**) explains **72% of the geographic variance** in pediatric pneumonia rates (Test R² = 0.7172) while meeting all standard regression assumptions.
 
 ---
 
@@ -103,24 +103,6 @@ The Gradient Boosting loss curves revealed classic overfitting — training loss
 | Housing & Geography | 0.00% |
 
 All three importance methods (Lasso coefficients, SHAP, permutation) converged on the same ranking with Spearman ρ = 1.000.
-
----
-
-## Repository Structure
-
-```
-pediatric-pneumonia-ml-england/
-│
-├── Pediatric_Pneumonia_Analysis.ipynb    # Full analysis notebook (reproducible pipeline)
-├── pediatric_pneumonia_england_LA_dataset_2023_2024.csv   # NHS Fingertips dataset
-├── best_model_lasso.pkl                  # Serialised Lasso model
-├── scaler.pkl                            # Fitted RobustScaler
-├── model_comparison_results.csv          # Model performance metrics
-├── Final_Report.pdf                      # Dissertation report
-├── figures/                              # Generated plots
-└── README.md                             # This file
-```
-
 ---
 
 ## How to Reproduce
