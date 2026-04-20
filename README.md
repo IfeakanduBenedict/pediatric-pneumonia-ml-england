@@ -1,178 +1,197 @@
-# Predicting Pediatric Pneumonia Hospitalisation Rates in English Local Authorities
+Predicting Pediatric Pneumonia Emergency Hospitalisation Rates Across English Local Authorities Using Machine Learning
 
-## Project Overview
+Python 
+scikit-learn 
+SHAP 
+Licence
 
-This project focuses on the development of a machine learning system that predicts pediatric pneumonia hospitalization rates across English Local Authorities using routinely collected NHS Fingertips data. The system analyzes socioeconomic, demographic, and healthcare utilization patterns to identify high-risk areas, aiming to reduce geographic health inequalities and support evidence-based NHS resource allocation.
+MSc Data Science  project applying interpretable machine learning to predict pediatric pneumonia emergency hospitalisation rates across 281 English Local Authorities using NHS Fingertips data (2023/24).
+⸻
+Overview
 
-Three machine learning models—**Linear Regression**, **Lasso Regression**, and **Gradient Boosting**—were trained and evaluated, with performance assessed using R² score, RMSE, and comprehensive statistical validation including regression assumptions testing.
+Paediatric pneumonia is a major driver of emergency hospital admissions in England, with substantial geographic variation across Local Authorities. This project builds and validates a predictive modelling framework using regularised regression and tree-based methods to:
 
----
+- Quantify geographic inequalities in pediatric pneumonia burden
+- Identify the most important socioeconomic, demographic, and healthcare-utilisation drivers
+- Provide NHS England with an interpretable tool for evidence-based resource allocation
 
-## Research Questions
+The final model (Lasso Regression) explains 72% of the geographic variance in pediatric pneumonia rates (Test R² = 0.7172) while meeting all standard regression assumptions.
+⸻
+Key Findings
+Metric	Value
+Local Authorities analysed	281
+Features used	18 (reduced to 9 by Lasso)
+Best model	Lasso Regression (alpha = 5.0)
+Test R²	0.7172 (71.72% variance explained)
+Test RMSE	144.54 per 100,000 population
+Top predictor	Emergency admissions, ages 0–4 (r = 0.79)
+Deprivation gradient	22.3% higher rates in most vs least deprived
+Feature importance method agreement	Spearman ρ = 1.000
 
-### Primary Research Question
-**How can machine learning models (Linear Regression, Lasso Regression, and Gradient Boosting) be utilized to predict emergency pneumonia hospitalisation rates among children and young people under 19 across English Local Authorities using socioeconomic deprivation, demographic vulnerability, and healthcare utilisation indicators?**
+Headline insight: Healthcare utilisation patterns dominate as predictors (88% of model importance), but socioeconomic deprivation operates indirectly through healthcare-access pathways rather than disappearing as a factor.
+⸻
+Research Questions
 
-### Secondary Research Question
-**Which socioeconomic, demographic, and healthcare-related factors contribute most to geographic inequalities in pneumonia hospitalisation rates among children and young people under 19 across England?**
+Primary: To what extent can machine learning models predict emergency pneumonia hospitalisation rates among children and young people under 19 across English Local Authorities using socioeconomic, demographic, and healthcare-utilisation indicators?
 
----
+Secondary: Which socioeconomic, demographic, and healthcare-related factors contribute most to geographic inequalities in pneumonia hospitalisation rates among children and young people under 19 across England?
+⸻
+Dataset
 
-## Data Ethics
+- Source: NHS Fingertips (UKHSA / NHS England)
+- Reference period: 2023/24
+- Sample: 281 English Local Authorities (District and Unitary Authority level)
+- Target: Emergency pneumonia hospitalisation rate per 100,000 population, under-19s
+- Features: 11 raw predictors expanded to 18 after feature engineering, spanning four domains:
+    - Socioeconomic deprivation (IMD, child poverty, fuel poverty, free school meals)
+    - Demographic vulnerability (age structure, ethnicity, birth rate)
+    - Housing & geography (population density, overcrowding)
+    - Healthcare system utilisation (infant mortality, emergency admissions)
 
-This project exclusively utilizes publicly available, aggregated data from **NHS Fingertips Public Health Data**, managed by the UK Office for Health Improvement and Disparities (OHID). The dataset contains no personally identifiable information—all data are Local Authority-level aggregates complying with UK data protection regulations.
+Data are aggregated at area level with no individual-level identifiers. Formal ethical approval was not required as the data are publicly available.
+⸻
+Methodology
 
-As the analysis uses only publicly accessible, anonymized aggregate statistics, no ethical approval was required. The research follows University of Hertfordshire ethical guidance and ensures transparency, reproducibility, and responsible use of machine learning in public health settings.
+The analysis follows a structured machine learning pipeline:
 
----
+1. Data preparation — 282 Local Authorities imported, one observation with missing outcome removed (n = 281), log-transformation applied to skewed population density
+2. Exploratory data analysis — univariate, bivariate, correlation heatmaps, deprivation gradient, urban–rural stratification
+3. Feature engineering — IMD quintile dummies, urban binary indicator, interaction terms
+4. Multicollinearity assessment — Variance Inflation Factor (mean VIF = 103.39, 15/18 features with VIF > 10)
+5. Modelling — three models compared on 80/20 train–test split:
+    - Linear Regression (baseline)
+    - Lasso Regression (L1 regularisation) — selected as final model
+    - Gradient Boosting (ensemble benchmark)
+6. Hyperparameter optimisation — GridSearchCV for Lasso (10-fold CV), RandomizedSearchCV for Gradient Boosting (5-fold CV)
+7. Regression diagnostics — Shapiro–Wilk, Breusch–Pagan, Durbin–Watson (all assumptions satisfied)
+8. Feature importance triangulation — Lasso coefficients, SHAP values, permutation importance (all methods agreed with Spearman ρ = 1.000)
+9. Sensitivity analysis (Model B) — re-ran Lasso excluding healthcare-utilisation features to isolate upstream predictors (Test R² = 0.49 with only demographic features retained)
+⸻
+Results Summary
 
-## Data Description
+Model Comparison
+Model	Train R²	Test R²	CV R² (± SD)	Test RMSE	Overfitting Gap
+Linear Regression	0.6931	0.6896	0.6156 (±0.17)	151.42	0.0034
+Lasso Regression 	0.6755	0.7172	0.6241 (±0.16)	144.54	-0.0417
+Gradient Boosting	0.9121	0.6267	0.6094 (±0.17)	166.07	0.2854
 
-- **Source:** NHS Fingertips Public Health Data (Public Health England)
-- **Format:** CSV
-- **Samples:** 281 English Local Authorities
-- **Time Period:** 2021-2024
-- **Features:**
-  - **Clinical/Healthcare:** Emergency admissions (0-4, under-18), respiratory admissions, A&E attendances
-  - **Socioeconomic:** IMD score & quintiles, child poverty, fuel poverty, free school meals
-  - **Demographic:** Population indices (0-4, 5-14, 15-19 years), ethnic minority percentage, birth rate, infant mortality
-  - **Housing/Geography:** Overcrowded households, population density, urban/rural classification
-- **Target:** Pneumonia hospitalization rates (ages 0-19) per 100,000 population
+The Gradient Boosting loss curves revealed classic overfitting — training loss fell to 5,019 while test loss plateaued at 27,578 (5.5× gap), confirming Lasso's suitability given the modest sample size.
 
-**Total Features:** 18 predictors across 4 categories
+Feature Importance by Category
+Category	Importance
+Healthcare Utilisation	88.25%
+Demographics	11.28%
+Socioeconomic Deprivation	0.47%
+Housing & Geography	0.00%
 
----
+All three importance methods (Lasso coefficients, SHAP, permutation) converged on the same ranking with Spearman ρ = 1.000.
+⸻
+Repository Structure
 
-## Project Structure
+pediatric-pneumonia-ml-england/
+│
+├── Pediatric_Pneumonia_Analysis.ipynb    # Full analysis notebook (reproducible pipeline)
+├── pediatric_pneumonia_england_LA_dataset_2023_2024.csv   # NHS Fingertips dataset
+├── best_model_lasso.pkl                  # Serialised Lasso model
+├── scaler.pkl                            # Fitted RobustScaler
+├── model_comparison_results.csv          # Model performance metrics
+├── Final_Report.pdf                      # Dissertation report
+├── figures/                              # Generated plots
+└── README.md                             # This file
 
-1. **Data Collection:** NHS Fingertips API (14 indicator datasets merged)
-2. **Data Preparation:**
-   - Handling missing values (imputation/exclusion)
-   - Feature engineering (log transformations, dummy variables, interaction terms)
-   - VIF analysis for multicollinearity assessment
-3. **Exploratory Data Analysis (EDA):**
-   - Univariate and bivariate analysis
-   - Correlation heatmaps and deprivation gradient visualization
-   - Urban vs Rural comparison
-4. **Model Development:**
-   - Linear Regression (baseline)
-   - Lasso Regression with L1 regularization (feature selection)
-   - Gradient Boosting (ensemble method)
-   - 80/20 train-test split with stratification
-   - 10-fold cross-validation for hyperparameter optimization
-5. **Evaluation:**
-   - R² Score, RMSE, MAE, MAPE
-   - Regression assumptions testing (Shapiro-Wilk, Breusch-Pagan, Durbin-Watson)
-   - Residual diagnostics and scatter plots
-6. **Feature Importance Analysis:**
-   - Lasso coefficients
-   - SHAP values for model-agnostic interpretability
-   - Consensus ranking between methods
+⸻
+How to Reproduce
 
----
+Requirements
 
-## Key Features
+python >= 3.10
+pandas
+numpy
+scikit-learn
+statsmodels
+matplotlib
+seaborn
+scipy
+shap
+joblib
 
-- **Comprehensive Feature Engineering:** Log transformations, dummy encoding, interaction terms (IMD × PopDensity, ChildPoverty × Urban)
-- **Multicollinearity Management:** L1 regularization (Lasso) reduced feature space from 18 → 9 non-zero coefficients
-- **SHAP Explainability:** Identifies top contributing factors (e.g., Emergency Admissions, Ethnic Minority %)
-- **Statistical Rigor:** All regression assumptions validated (normality ✓, homoscedasticity ✓, independence ✓)
-- **Model Tuning:** GridSearchCV and RandomizedSearchCV for optimal hyperparameters
-- **Performance-Driven:** Lasso Regression selected based on R² = 0.72 and superior feature interpretability
 
----
+Install via:
 
-## Results
+pip install pandas numpy scikit-learn statsmodels matplotlib seaborn scipy shap joblib
 
-### Model Performance Summary
 
-| Model | Type | CV R² | Test R² | Test RMSE | Test MAE | Key Characteristics |
-|-------|------|-------|---------|-----------|----------|---------------------|
-| **Lasso Regression**  | Linear (L1) | 0.62 ± 0.04 | **0.72** | **144.54** | **107.70** | Automatic feature selection, best performance |
-| Linear Regression | Baseline | 0.62 | 0.69 | 148.54 | 109.74 | Unregularized baseline |
-| Gradient Boosting | Ensemble | 0.61 | 0.63 | 166.07 | 120.05 | Best tree-based model |
+Running the Notebook
 
-### Top 10 Predictive Factors
+1. Clone the repository:
+2. git clone https://github.com/IfeakanduBenedict/pediatric-pneumonia-ml-england.git
+3. cd pediatric-pneumonia-ml-england
 
-| Rank | Feature | Category | Lasso Coefficient | SHAP Importance | Effect Direction |
-|------|---------|----------|-------------------|-----------------|------------------|
-| 1 | Emergency Admissions (0-4 years) | Healthcare | +192.98 | 142.24 | Strong positive |
-| 2 | Ethnic Minority Percentage | Demographics | -53.81 | 32.33 | Protective (negative) |
-| 3 | Population (0-4 years) Index | Demographics | +45.46 | 29.95 | Positive |
-| 4 | IMD Quintile 4 | Socioeconomic | -35.13 | 11.83 | Negative vs Q5 |
-| 5 | IMD Quintile 3 | Socioeconomic | -27.68 | 9.35 | Negative vs Q5 |
-| 6 | Overcrowded Households (%) | Housing | +19.42 | 7.20 | Positive |
-| 7 | Emergency Admissions (Under-18) | Healthcare | +16.89 | 6.89 | Positive |
-| 8 | Child Poverty (%) | Socioeconomic | +14.23 | 5.94 | Positive |
-| 9 | IMD × PopDensity (interaction) | Composite | +12.47 | 4.88 | Positive |
-| 10 | Birth Rate per 1,000 | Demographics | +8.91 | 3.67 | Positive |
 
-### Category-Level Importance
+2. Open the notebook in Google Colab or Jupyter:
+3. jupyter notebook Pediatric_Pneumonia_Analysis.ipynb
 
-- **Healthcare Utilization:** 60.1%
-- **Demographics:** 26.3%
-- **Socioeconomic Deprivation:** 13.6%
-- **Housing & Geography:** 0.0% (eliminated by Lasso)
 
----
+3. Run all cells in order. The notebook reproduces the full pipeline end-to-end.
 
-## Key Findings
+A fixed random seed (RANDOM_STATE = 42) is used throughout to ensure reproducibility.
+⸻
+Key Visualisations
 
-### 1. Strong Predictive Capability
-- Lasso model achieves **R² = 0.72** (72% variance explained)
-- Test RMSE = 144.54 per 100,000 population
-- All regression assumptions satisfied
+The notebook generates the following figures, all referenced in the dissertation:
 
-### 2. Healthcare Utilization Dominates
-- Emergency admissions account for **60.1%** of predictive importance
-- Challenges conventional focus on socioeconomic deprivation alone
-- Suggests healthcare access barriers as critical intervention points
+- Figure 4.1 — Target variable distribution (histogram, box plot, Q-Q plot)
+- Figure 4.2 — Correlation matrix heatmap
+- Figure 4.3 — Pneumonia rates by IMD quintile
+- Figure 4.4 — VIF multicollinearity assessment
+- Figure 4.5 — Lasso actual vs predicted (with 95% prediction interval)
+- Figure 4.6 — Four-panel model performance comparison
+- Figure 4.7 — Gradient Boosting loss curves (overfitting diagnostic)
+- Figure 4.8 — Lasso regression diagnostic plots
+- Figure 4.9 — Top 10 features by Lasso coefficient
+- Figure 4.10 — SHAP beeswarm and bar plots
+- Figure 4.11 — Permutation importance rankings
+- Figure 4.12 — Feature importance by category
+⸻
+Policy Implications
 
-### 3. Unexpected Protective Effects
-- **Higher ethnic minority percentages associated with LOWER pneumonia rates** (coefficient = -53.81)
-- Warrants investigation of cultural health practices or healthcare engagement patterns
+The study supports a dual strategy for addressing paediatric pneumonia inequalities:
 
-### 4. Clear Deprivation Gradient
-- Stepwise reduction from most deprived (Q5) to least deprived (Q1)
-- But effect secondary to healthcare utilization patterns
+1. Strengthening primary care access in deprived areas, particularly for families with young children — high emergency admission rates likely reflect blocked GP pathways rather than unavoidable clinical need
+2. Long-term social determinants interventions aligned with NHS England's Core20PLUS5 framework and the Marmot Review's recommendations
 
-### 5. Linear Models Superior
-- Lasso (R² = 0.72) significantly outperforms Gradient Boosting (R² = 0.63)
-- Validates linear relationships and appropriateness of regularization approach
+The validated predictive model offers NHS England a practical tool for evidence-based geographic risk stratification and resource allocation using routinely collected data.
+⸻
+Limitations
 
----
+- Cross-sectional ecological design precludes causal inference
+- Area-level aggregation means findings inform planning, not individual risk
+- Unmeasured confounders (air quality, vaccination coverage, GP accessibility) likely explain much of the 28% unexplained variance
+- Sample size of 281 limits complex model fitting and stability of estimates
+- Standard k-fold cross-validation does not fully account for spatial autocorrelation (though Durbin–Watson = 1.92 suggested minimal impact)
+⸻
+Citation
 
-## Future Work and Directions
+If you use this work, please cite:
 
-- **Longitudinal Analysis:** Incorporate multi-year trends to establish causal pathways
-- **Air Quality Data:** Include pollution metrics as additional predictor
-- **Vaccination Coverage:** Integrate immunization rates to assess preventive factors
-- **Spatial Regression:** Account for geographic clustering and neighborhood effects
-- **Real-Time Monitoring:** Develop early warning system using weekly admission data
-- **Clinical Validation:** Collaborate with NHS England for field testing and policy implementation
-- **Extension to Other Conditions:** Apply methodology to asthma, bronchiolitis, other pediatric respiratory illnesses
-- **Interactive Dashboard:** Deploy Streamlit/Dash interface for NHS commissioners
+Uzoegwu, I. (2026). Predicting Paediatric Pneumonia Emergency Hospitalisation Rates Across English Local Authorities Using Machine Learning. MSc Data Science Dissertation, University of Hertfordshire.
+⸻
+Author
 
----
+Ifeakandu Uzoegwu 
+MSc Data Science — University of Hertfordshire 
+Student Number: 23068196
 
-## Contact
+Supervisor: Hyungrok Kim 
+Module Supervisors: Darshan Kakkad, Carolyn Devereux
 
-For questions, feedback, or collaboration opportunities, please contact:
+Department of Physics, Astronomy and Mathematics 
+School of Physics, Engineering and Computer Science
+⸻
+Acknowledgements
 
-**Ifeakandu Uzoegwu**
-- 📧 Email: [ultimateozzie@gmail.com]
-- 💼 LinkedIn: [Ifeakandu Uzoegwu]
+This project used data from NHS Fingertips (UKHSA / NHS England), an open public health data repository. Thanks to the open-source community for the libraries that made this analysis possible: scikit-learn, SHAP, pandas, statsmodels, and matplotlib.
+⸻
+Licence
 
----
-
-## Contributing
-
-Pull requests and issue reports are welcome. Contributions that improve model performance, interpretability, documentation, or clinical applicability are especially encouraged.
-
----
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
+This repository is released for academic and non-commercial use. Please credit the author when reusing materials.
