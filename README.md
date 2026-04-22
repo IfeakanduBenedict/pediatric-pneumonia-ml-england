@@ -7,7 +7,7 @@
 
 MSc Data Science project applying interpretable machine learning to predict pediatric pneumonia emergency hospitalisation rates across 281 English Local Authorities using NHS Fingertips data (2023/24).
 
----
+--
 
 ## Overview
 
